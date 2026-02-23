@@ -11,7 +11,7 @@ public class PersonService {
         return rep.getById(id);
     }
 
-    public void deletById(int id) throws SQLException{
+    public void deleteById(int id) throws SQLException{
         rep.deleteById(id);
     }
 

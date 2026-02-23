@@ -50,7 +50,7 @@ public class App{
             });
                 app.delete("/person/{id}", ctx -> {
                     int id = Integer.parseInt(ctx.pathParam("id"));
-                   servicePer.deletById(id);
+                   servicePer.deleteById(id);
                    ctx.result("Deleted");
                 });
                     app.delete("/product/{id}", ctx ->{
