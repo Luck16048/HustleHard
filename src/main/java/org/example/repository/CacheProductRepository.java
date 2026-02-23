@@ -6,20 +6,20 @@ import redis.clients.jedis.*;
 
 
 public class CacheProductRepository {
-    public void saveProductCache(ProductEntity productEntity){
+    public void saveCache(ProductEntity productEntity){
         try(Jedis jedis = ConnectRider.getConnectionRedis()){
             jedis.set("product:" + productEntity.getId() + ":status", productEntity.getStatus().name());
         }
     }
 
-    public StatusProductEntity findStatusProdust(int productId) {
+    public StatusProductEntity findCache(int productId) {
         try (Jedis jedis = ConnectRider.getConnectionRedis()) {
             String value = jedis.get("product:" + productId + ":status");
             return value != null ? StatusProductEntity.valueOf(value) : null;
         }
     }
 
-    public void deleteProduct(int productId){
+    public void deleteCache(int productId){
         try(Jedis jedis = ConnectRider.getConnectionRedis()){
             jedis.del("product:" + productId + ":status");
         }

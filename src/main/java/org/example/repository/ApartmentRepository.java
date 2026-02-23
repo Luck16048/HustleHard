@@ -7,23 +7,7 @@ import org.example.entity.StatusEntity;
 import java.sql.*;
 
 public class ApartmentRepository {
-    public void saveApartment(ApartmentEntity apartmentEntity) throws SQLException{
-        String sql = "INSERT INTO apartment (id, number, class, status) VALUE (?, ?, ?, ?)";
-
-        try(Connection conn = ConnectDb.getConnection();
-            PreparedStatement st = conn.prepareStatement(sql)){
-
-            st.setInt(1, apartmentEntity.getId());
-            st.setInt(2, apartmentEntity.getNumber());
-            st.setString(3, apartmentEntity.getType().name());
-            st.setString(4, apartmentEntity.getStatus().name());
-
-            st.executeUpdate();
-        }
-    }
-
-
-    public ApartmentEntity findApartment(int id) throws SQLException{
+    public ApartmentEntity getById(int id) throws SQLException{
         String sql = "SELECT * FROM apartment WHERE id = ?";
 
         try(Connection conn = ConnectDb.getConnection();
@@ -47,8 +31,7 @@ public class ApartmentRepository {
     }
 
 
-
-    public void deleteApartment(int id) throws SQLException{
+    public void deleteById(int id) throws SQLException{
           String sql = "DELETE FROM apartment WHERE id = ?";
 
           try(Connection conn = ConnectDb.getConnection();
@@ -57,6 +40,21 @@ public class ApartmentRepository {
               st.setInt(1,id);
               st.executeUpdate();
           }
+    }
 
+
+    public void save(ApartmentEntity apartmentEntity) throws SQLException{
+        String sql = "INSERT INTO apartment (id, number, class, status) VALUE (?, ?, ?, ?)";
+
+        try(Connection conn = ConnectDb.getConnection();
+            PreparedStatement st = conn.prepareStatement(sql)){
+
+            st.setInt(1, apartmentEntity.getId());
+            st.setInt(2, apartmentEntity.getNumber());
+            st.setString(3, apartmentEntity.getType().name());
+            st.setString(4, apartmentEntity.getStatus().name());
+
+            st.executeUpdate();
+        }
     }
 }
