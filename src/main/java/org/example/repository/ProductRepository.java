@@ -54,4 +54,20 @@ public class ProductRepository {
         st.executeUpdate();
     }
     }
+
+
+    public void update(ProductEntity productEntity) throws  SQLException{
+        String sql = "UPDATE product SET name = ?, country = ?, status = ? WHERE id = ?";
+
+        try(Connection conn = ConnectDb.getConnection();
+        PreparedStatement st = conn.prepareStatement(sql)){
+
+            st.setString(1,productEntity.getName());
+            st.setString(2,productEntity.getCountry());
+            st.setString(3,String.valueOf(productEntity.getStatus()));
+            st.setInt(4,productEntity.getId());
+
+            st.executeUpdate();
+        }
+    }
 }

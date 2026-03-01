@@ -9,28 +9,32 @@ public class PassportEntity {
     public void setId(int id) {
         this.id = id;
     }
+
     public int getId() {
         return id;
     }
 
-    public void setFullName(String fullName){
+    public void setFullName(String fullName) {
         this.fullName = fullName;
     }
-    public String getFullName(){
+
+    public String getFullName() {
         return fullName;
     }
 
-    public void setCountry(String country){
+    public void setCountry(String country) {
         this.country = country;
     }
-    public String getCountry(){
+
+    public String getCountry() {
         return country;
     }
 
-    public void setCode(int code){
+    public void setCode(int code) {
         this.code = code;
     }
-    public int getCode(){
+
+    public int getCode() {
         return code;
     }
 

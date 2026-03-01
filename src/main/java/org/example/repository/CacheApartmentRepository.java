@@ -1,27 +1,28 @@
 package org.example.repository;
-import org.example.config.ConnectRider;
+
+import org.example.config.ConnectRedis;
 import org.example.entity.ApartmentEntity;
 import org.example.entity.StatusEntity;
 import redis.clients.jedis.*;
 
 public class CacheApartmentRepository {
-    public void saveCache(ApartmentEntity apartmentEntity){
-        try(Jedis jedis = ConnectRider.getConnectionRedis()){
+    public void saveCache(ApartmentEntity apartmentEntity) {
+        try (Jedis jedis = ConnectRedis.getConnectionRedis()) {
             jedis.set("apartment:" + apartmentEntity.getId() + ":status", apartmentEntity.getStatus().name());
         }
     }
 
 
-    public StatusEntity findCache(int apartmentId){
-        try(Jedis jedis = ConnectRider.getConnectionRedis()){
+    public StatusEntity findCache(int apartmentId) {
+        try (Jedis jedis = ConnectRedis.getConnectionRedis()) {
             String value = jedis.get("apartment:" + apartmentId + ":status");
-            return  value != null ? StatusEntity.valueOf(value) : null;
+            return value != null ? StatusEntity.valueOf(value) : null;
         }
     }
 
 
-    public void deleteCache(int apartmentId){
-        try(Jedis jedis = ConnectRider.getConnectionRedis()){
+    public void deleteCache(int apartmentId) {
+        try (Jedis jedis = ConnectRedis.getConnectionRedis()) {
             jedis.del("apartment:" + apartmentId + ":status");
         }
     }

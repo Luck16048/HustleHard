@@ -1,4 +1,5 @@
 package org.example.repository;
+
 import org.example.config.ConnectDb;
 import org.example.entity.ApartmentEntity;
 import org.example.entity.ServesLevelEntity;
@@ -7,16 +8,16 @@ import org.example.entity.StatusEntity;
 import java.sql.*;
 
 public class ApartmentRepository {
-    public ApartmentEntity getById(int id) throws SQLException{
+    public ApartmentEntity getById(int id) throws SQLException {
         String sql = "SELECT * FROM apartment WHERE id = ?";
 
-        try(Connection conn = ConnectDb.getConnection();
-            PreparedStatement st = conn.prepareStatement(sql)){
+        try (Connection conn = ConnectDb.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
 
-            st.setInt(1,id);
+            st.setInt(1, id);
             ResultSet rs = st.executeQuery();
 
-            if(rs.next()){
+            if (rs.next()) {
                 ApartmentEntity ap = new ApartmentEntity();
                 ap.setId(rs.getInt("id"));
                 ap.setNumber(rs.getInt("number"));
@@ -30,28 +31,44 @@ public class ApartmentRepository {
     }
 
 
-    public void deleteById(int id) throws SQLException{
-          String sql = "DELETE FROM apartment WHERE id = ?";
+    public void deleteById(int id) throws SQLException {
+        String sql = "DELETE FROM apartment WHERE id = ?";
 
-          try(Connection conn = ConnectDb.getConnection();
-              PreparedStatement st = conn.prepareStatement(sql)){
+        try (Connection conn = ConnectDb.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
 
-              st.setInt(1,id);
-              st.executeUpdate();
-          }
+            st.setInt(1, id);
+            st.executeUpdate();
+        }
     }
 
 
-    public void save(ApartmentEntity apartmentEntity) throws SQLException{
+    public void save(ApartmentEntity apartmentEntity) throws SQLException {
         String sql = "INSERT INTO apartment (id, number, class, status) VALUE (?, ?, ?, ?)";
 
-        try(Connection conn = ConnectDb.getConnection();
-            PreparedStatement st = conn.prepareStatement(sql)){
+        try (Connection conn = ConnectDb.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
 
             st.setInt(1, apartmentEntity.getId());
             st.setInt(2, apartmentEntity.getNumber());
             st.setString(3, apartmentEntity.getType().name());
             st.setString(4, apartmentEntity.getStatus().name());
+
+            st.executeUpdate();
+        }
+    }
+
+
+    public void update(ApartmentEntity apartmentEntity) throws SQLException {
+        String sql = "UPDATE apartment SET number = ?, class = ?, status = ? WHERE id = ?";
+
+        try (Connection conn = ConnectDb.getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
+
+            st.setInt(1, apartmentEntity.getNumber());
+            st.setString(2, String.valueOf(apartmentEntity.getType()));
+            st.setString(3, String.valueOf(apartmentEntity.getStatus()));
+            st.setInt(4, apartmentEntity.getId());
 
             st.executeUpdate();
         }

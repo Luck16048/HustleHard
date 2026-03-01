@@ -9,6 +9,7 @@ public class ProductEntity {
     public void setId(int id) {
         this.id = id;
     }
+
     public int getId() {
         return id;
     }
@@ -17,6 +18,7 @@ public class ProductEntity {
     public void setName(String name) {
         this.name = name;
     }
+
     public String getName() {
         return name;
     }
@@ -25,6 +27,7 @@ public class ProductEntity {
     public void setCountry(String made) {
         this.country = made;
     }
+
     public String getCountry() {
         return country;
     }
@@ -33,6 +36,7 @@ public class ProductEntity {
     public void setStatus(StatusProductEntity status) {
         this.status = status;
     }
+
     public StatusProductEntity getStatus() {
         return status;
     }

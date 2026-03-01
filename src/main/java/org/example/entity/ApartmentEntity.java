@@ -10,13 +10,15 @@ public class ApartmentEntity {
     public void setId(int id) {
         this.id = id;
     }
-    public int getId (){
+
+    public int getId() {
         return id;
     }
 
     public void setNumber(int number) {
         this.number = number;
     }
+
     public int getNumber() {
         return number;
     }
@@ -24,6 +26,7 @@ public class ApartmentEntity {
     public void setType(ServesLevelEntity type) {
         this.type = type;
     }
+
     public ServesLevelEntity getType() {
         return type;
     }
@@ -31,6 +34,7 @@ public class ApartmentEntity {
     public void setStatus(StatusEntity statusEntity) {
         this.statusEntity = statusEntity;
     }
+
     public StatusEntity getStatus() {
         return statusEntity;
     }

@@ -53,4 +53,20 @@ public class PassportRepository {
             st.executeUpdate();
         }
     }
+
+
+    public void update(PassportEntity passportEntity) throws SQLException{
+        String sql = "UPDATE apartment SET fullName = ?, country = ?, code = ? WHERE id = ?";
+
+        try(Connection conn = ConnectDb.getConnection();
+        PreparedStatement st = conn.prepareStatement(sql)){
+
+            st.setString(1,passportEntity.getFullName());
+            st.setString(2,passportEntity.getCountry());
+            st.setInt(3,passportEntity.getCode());
+            st.setInt(4,passportEntity.getId());
+
+            st.executeUpdate();
+        }
+    }
 }

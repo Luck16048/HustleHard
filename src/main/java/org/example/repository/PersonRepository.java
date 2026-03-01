@@ -55,4 +55,17 @@ public class PersonRepository {
         }
     }
 
+    public void update(PersonEntity personEntity) throws  SQLException{
+        String sql = "UPDATE person SET name = ?, age = ? WHERE id = ?";
+
+        try(Connection conn = ConnectDb.getConnection();
+        PreparedStatement st = conn.prepareStatement(sql)){
+
+            st.setString(1,personEntity.getName());
+            st.setInt(2,personEntity.getAge());
+            st.setInt(3,personEntity.getId());
+
+            st.executeUpdate();
+        }
+    }
 }
