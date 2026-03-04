@@ -1,72 +1,70 @@
 package org.example.repository;
+
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.table;
+
 import org.example.config.ConnectDb;
 import org.example.entity.PassportEntity;
+import org.jooq.DSLContext;
 
 import java.sql.*;
 
+
 public class PassportRepository {
-    public PassportEntity getById(int id) throws SQLException{
-        String sql = "SELECT * FROM passport WHERE id = ?";
+    public PassportEntity getById(int id) throws SQLException {
+        DSLContext dsl = ConnectDb.getDSL();
 
-        try(Connection conn = ConnectDb.getConnection();
-            PreparedStatement st = conn.prepareStatement(sql)){
+        org.jooq.Record record = dsl.select()
+                .from("passport")
+                .where(field("id").eq(id))
+                .fetchOne();
 
-            st.setInt(1, id);
-            ResultSet rs = st.executeQuery();
-
-            if(rs.next()){
-                PassportEntity p = new PassportEntity();
-                p.setId(rs.getInt("id"));
-                p.setFullName(rs.getString("fullName"));
-                p.setCountry(rs.getString("country"));
-                p.setCode(rs.getInt("code"));
-                return p;
-            }
+        if (record != null) {
+            PassportEntity p = new PassportEntity();
+            p.setId(record.get("id", Integer.class));
+            p.setFullName(record.get("fullName", String.class));
+            p.setCountry(record.get("country", String.class));
+            p.setCode(record.get("code", Integer.class));
+            return p;
         }
         return null;
     }
 
 
-    public void deleteById(int id) throws SQLException{
-        String sql = "DELETE FROM passport WHERE id = ?";
+    public void deleteById(int id) throws SQLException {
+        DSLContext dsl = ConnectDb.getDSL();
 
-        try(Connection conn = ConnectDb.getConnection();
-            PreparedStatement st = conn.prepareStatement(sql)){
-
-            st.setInt(1,id);
-            st.executeUpdate();
-        }
+        dsl.deleteFrom(table("passport"))
+                .where(field("id").eq(id))
+                .execute();
     }
 
 
-    public void save(PassportEntity passportEntity) throws SQLException{
-        String sql = "INSERT INTO passport (id, fullName, country, code) VALUE(?, ?, ?, ?)";
+    public void save(PassportEntity passportEntity) throws SQLException {
+        DSLContext dsl = ConnectDb.getDSL();
 
-        try(Connection conn = ConnectDb.getConnection();
-            PreparedStatement st = conn.prepareStatement(sql)){
-
-            st.setInt(1, passportEntity.getId());
-            st.setString(2, passportEntity.getFullName());
-            st.setString(3, passportEntity.getCountry());
-            st.setInt(4, passportEntity.getCode());
-
-            st.executeUpdate();
-        }
+        dsl.insertInto(table("passport"),
+                        field("id"),
+                        field("fullName"),
+                        field("country"),
+                        field("code"))
+                .values(
+                        passportEntity.getId(),
+                        passportEntity.getFullName(),
+                        passportEntity.getCountry(),
+                        passportEntity.getCode())
+                .execute();
     }
 
 
-    public void update(PassportEntity passportEntity) throws SQLException{
-        String sql = "UPDATE apartment SET fullName = ?, country = ?, code = ? WHERE id = ?";
+    public void update(PassportEntity passportEntity) throws SQLException {
+        DSLContext dsl = ConnectDb.getDSL();
 
-        try(Connection conn = ConnectDb.getConnection();
-        PreparedStatement st = conn.prepareStatement(sql)){
-
-            st.setString(1,passportEntity.getFullName());
-            st.setString(2,passportEntity.getCountry());
-            st.setInt(3,passportEntity.getCode());
-            st.setInt(4,passportEntity.getId());
-
-            st.executeUpdate();
-        }
+        dsl.update(table("password"))
+                .set(field("fullName"), passportEntity.getFullName())
+                .set(field("country"), passportEntity.getCountry())
+                .set(field("code"), passportEntity.getCode())
+                .where(field("id").eq(passportEntity.getId()))
+                .execute();
     }
 }

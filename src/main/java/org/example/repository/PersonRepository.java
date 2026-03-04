@@ -1,6 +1,12 @@
 package org.example.repository;
+
 import org.example.config.ConnectDb;
 import org.example.entity.PersonEntity;
+import org.jooq.DSLContext;
+
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.table;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,64 +14,55 @@ import java.sql.SQLException;
 
 
 public class PersonRepository {
-    public PersonEntity getById(int id) throws  SQLException{
-    String sql = "SELECT * FROM person WHERE id = ?";
+    public PersonEntity getById(int id) throws SQLException {
+        DSLContext dsl = ConnectDb.getDSL();
 
-    try(Connection conn = ConnectDb.getConnection();
-        PreparedStatement st = conn.prepareStatement(sql)){
+        org.jooq.Record record = dsl.select()
+                .from("person")
+                .where(field("id").eq(id))
+                .fetchOne();
 
-        st.setInt(1,id);
-        ResultSet rs = st.executeQuery();
-
-        if(rs.next()){
+        if (record != null) {
             PersonEntity p = new PersonEntity();
-            p.setId(rs.getInt("id"));
-            p.setName(rs.getString("name"));
-            p.setAge(rs.getInt("age"));
-            return  p;
+            p.setId(record.get("id", Integer.class));
+            p.setName(record.get("name", String.class));
+            p.setAge(record.get("age", Integer.class));
+            return p;
         }
-    }
-    return null;
-}
-
-
-    public void deleteById(int id) throws SQLException{
-        String sql = "DELETE FROM person WHERE id = ?";
-
-        try(Connection conn = ConnectDb.getConnection();
-        PreparedStatement st = conn.prepareStatement(sql)){
-
-            st.setInt(1,id);
-            st.executeUpdate();
-        }
+        return null;
     }
 
 
-    public void save(PersonEntity personEntity) throws SQLException{
-        String sql ="INSERT INTO person (id, name, age) VALUE (?,?,?)";
+    public void deleteById(int id) throws SQLException {
+        DSLContext dsl = ConnectDb.getDSL();
 
-        try(Connection conn = ConnectDb.getConnection();
-            PreparedStatement st = conn.prepareStatement(sql)){
-
-            st.setInt(1,personEntity.getId());
-            st.setString(2,personEntity.getName());
-            st.setInt(3,personEntity.getAge());
-
-            st.executeUpdate();
-        }
+        dsl.deleteFrom(table("person"))
+                .where(field("id").eq(id))
+                .execute();
     }
 
-    public void update(PersonEntity personEntity) throws  SQLException{
-        String sql = "UPDATE person SET name = ?, age = ? WHERE id = ?";
 
-        try(Connection conn = ConnectDb.getConnection();
-        PreparedStatement st = conn.prepareStatement(sql)){
+    public void save(PersonEntity personEntity) throws SQLException {
+        DSLContext dsl = ConnectDb.getDSL();
 
-            st.setString(1,personEntity.getName());
-            st.setInt(2,personEntity.getAge());
-            st.setInt(3,personEntity.getId());
+        dsl.insertInto(table("person"),
+                        field("id"),
+                        field("name"),
+                        field("age"))
+                .values(
+                        personEntity.getId(),
+                        personEntity.getName(),
+                        personEntity.getAge())
+                .execute();
+    }
 
-            st.executeUpdate();
-        }
+    public void update(PersonEntity personEntity) throws SQLException {
+        DSLContext dsl = ConnectDb.getDSL();
+
+        dsl.update(table("person"))
+                .set(field("name"), personEntity.getName())
+                .set(field("age"), personEntity.getAge())
+                .where(field("id").eq(personEntity.getId()))
+                .execute();
     }
 }

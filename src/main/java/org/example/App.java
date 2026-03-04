@@ -106,7 +106,7 @@ public class App {
             ProductEntity prod = ctx.bodyAsClass(ProductEntity.class);
             prod.setId(id);
             servicePro.update(prod);
-            ctx.result("Updated");
+            ctx.result("Updated ");
         });
 
         app.patch("/apartment/{id}", ctx -> {
