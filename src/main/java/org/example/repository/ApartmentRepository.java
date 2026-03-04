@@ -1,76 +1,73 @@
 package org.example.repository;
 
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.table;
+
 import org.example.config.ConnectDb;
 import org.example.entity.ApartmentEntity;
 import org.example.entity.ServesLevelEntity;
 import org.example.entity.StatusEntity;
+import org.jooq.DSLContext;
 
 import java.sql.*;
 
+
 public class ApartmentRepository {
     public ApartmentEntity getById(int id) throws SQLException {
-        String sql = "SELECT * FROM apartment WHERE id = ?";
+        DSLContext dsl = ConnectDb.getDSL();
 
-        try (Connection conn = ConnectDb.getConnection();
-             PreparedStatement st = conn.prepareStatement(sql)) {
+        org.jooq.Record record = dsl.select()
+                .from("apartment")
+                .where(field("id")
+                        .eq(id)).fetchOne();
 
-            st.setInt(1, id);
-            ResultSet rs = st.executeQuery();
+        if (record != null) {
+            ApartmentEntity ap = new ApartmentEntity();
+            ap.setId(record.get("id", Integer.class));
+            ap.setNumber(record.get("number", Integer.class));
+            ap.setType(ServesLevelEntity.valueOf(record.get("class", String.class)));
+            ap.setStatus(StatusEntity.valueOf(record.get("status", String.class)));
 
-            if (rs.next()) {
-                ApartmentEntity ap = new ApartmentEntity();
-                ap.setId(rs.getInt("id"));
-                ap.setNumber(rs.getInt("number"));
-                ap.setType(ServesLevelEntity.valueOf(rs.getString("class")));
-                ap.setStatus(StatusEntity.valueOf(rs.getString("status")));
-
-                return ap;
-            }
-            return null;
+            return ap;
         }
+        return null;
     }
 
 
     public void deleteById(int id) throws SQLException {
-        String sql = "DELETE FROM apartment WHERE id = ?";
+        DSLContext dsl = ConnectDb.getDSL();
 
-        try (Connection conn = ConnectDb.getConnection();
-             PreparedStatement st = conn.prepareStatement(sql)) {
-
-            st.setInt(1, id);
-            st.executeUpdate();
-        }
+        dsl.deleteFrom(table("apartment"))
+                .where(field("id")
+                        .eq(id))
+                .execute();
     }
 
 
     public void save(ApartmentEntity apartmentEntity) throws SQLException {
-        String sql = "INSERT INTO apartment (id, number, class, status) VALUE (?, ?, ?, ?)";
+        DSLContext dsl = ConnectDb.getDSL();
 
-        try (Connection conn = ConnectDb.getConnection();
-             PreparedStatement st = conn.prepareStatement(sql)) {
-
-            st.setInt(1, apartmentEntity.getId());
-            st.setInt(2, apartmentEntity.getNumber());
-            st.setString(3, apartmentEntity.getType().name());
-            st.setString(4, apartmentEntity.getStatus().name());
-
-            st.executeUpdate();
-        }
+        dsl.insertInto(table("apartment"),
+                        field("id"),
+                        field("number"),
+                        field("class"),
+                        field("status"))
+                .values(apartmentEntity.getId(),
+                        apartmentEntity.getNumber(),
+                        apartmentEntity.getType(),
+                        apartmentEntity.getStatus())
+                .execute();
     }
 
 
     public void update(ApartmentEntity apartmentEntity) throws SQLException {
-        String sql = "UPDATE apartment SET number = ?, class = ?, status = ? WHERE id = ?";
+        DSLContext dsl = ConnectDb.getDSL();
 
-        try (Connection conn = ConnectDb.getConnection();
-             PreparedStatement st = conn.prepareStatement(sql)) {
-
-            st.setInt(1, apartmentEntity.getNumber());
-            st.setString(2, String.valueOf(apartmentEntity.getType()));
-            st.setString(3, String.valueOf(apartmentEntity.getStatus()));
-            st.setInt(4, apartmentEntity.getId());
-
-            st.executeUpdate();
-        }
+        dsl.update(table("apartment"))
+                .set(field("number"), apartmentEntity.getNumber())
+                .set(field("class"), apartmentEntity.getType().name())
+                .set(field("status"), apartmentEntity.getStatus().name())
+                .where(field("id").eq(apartmentEntity.getId()))
+                .execute();
     }
 }

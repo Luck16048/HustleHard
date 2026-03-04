@@ -1,5 +1,7 @@
 package org.example.config;
-
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
+import org.jooq.impl.DSL;
 import java.sql.*;
 
 
@@ -10,5 +12,10 @@ public class ConnectDb {
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+    }
+
+    public static DSLContext getDSL() throws SQLException{
+        Connection conn = getConnection();
+        return DSL.using(conn, SQLDialect.MYSQL);
     }
 }
