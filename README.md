@@ -127,13 +127,6 @@ Run:
 App.java
 ```
 
-The server will start on:
-
-```http
-http://localhost:9000
-```
-
----
 
 ## 🎯 Learning Goals
 
